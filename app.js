@@ -1,27 +1,21 @@
+const express = require("express");
 const mongoose = require("mongoose");
+
+const app = express();
+const PORT = process.env.PORT || 3000;
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log("Connected to MongoDB Atlas");
-
-    const studentSchema = new mongoose.Schema({
-      name: String,
-      className: String,
-      assignment: String
-    });
-
-    const Student = mongoose.model("Student", studentSchema);
-
-    return Student.create({
-      name: "Deepika",
-      className: "Web Apps",
-      assignment: "Assignment 11"
-    });
-  })
-  .then((doc) => {
-    console.log("Inserted document:", doc);
-    mongoose.connection.close();
   })
   .catch((err) => {
-    console.error("Error:", err);
+    console.error("MongoDB connection error:", err);
   });
+
+app.get("/", (req, res) => {
+  res.send("Mongo App is running");
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
