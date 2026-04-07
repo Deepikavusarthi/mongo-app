@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-mongoose.connect("mongodb+srv://s589690_db_user:test12345@cluster0.fzfyisv.mongodb.net/learnMongo?retryWrites=true&w=majority")
+mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log("Connected to MongoDB Atlas");
 
@@ -24,5 +24,4 @@ mongoose.connect("mongodb+srv://s589690_db_user:test12345@cluster0.fzfyisv.mongo
   })
   .catch((err) => {
     console.error("Error:", err);
-    
   });
