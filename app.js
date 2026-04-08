@@ -1,25 +1,27 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-const Costume = require("./models/costume");
-const resourceRouter = require("./routes/resource");
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
+
+const connectionString = process.env.MONGO_CON;
+mongoose.connect(connectionString);
+
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "MongoDB connection error:"));
+db.once("open", function () {
+  console.log("Connected to MongoDB Atlas");
+});
+
+const Costume = require("./models/costume");
+const resourceRouter = require("./routes/resource");
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("✅ Connected to MongoDB Atlas");
-  })
-  .catch((err) => {
-    console.error("❌ MongoDB connection error:", err);
-  });
-
-// seed database
 async function recreateDB() {
   await Costume.deleteMany();
 
@@ -32,7 +34,7 @@ async function recreateDB() {
   let instance2 = new Costume({
     costume_type: "witch",
     size: "medium",
-    cost: 22.0
+    cost: 22
   });
 
   let instance3 = new Costume({
@@ -41,32 +43,17 @@ async function recreateDB() {
     cost: 18.5
   });
 
-  instance1.save()
-    .then(() => {
-      console.log("First object saved");
-    })
-    .catch((err) => {
-      console.error(err);
-    });
+  await instance1.save();
+  console.log("First object saved");
 
-  instance2.save()
-    .then(() => {
-      console.log("Second object saved");
-    })
-    .catch((err) => {
-      console.error(err);
-    });
+  await instance2.save();
+  console.log("Second object saved");
 
-  instance3.save()
-    .then(() => {
-      console.log("Third object saved");
-    })
-    .catch((err) => {
-      console.error(err);
-    });
+  await instance3.save();
+  console.log("Third object saved");
 }
 
-let reseed = true;
+let reseed = false;
 if (reseed) {
   recreateDB();
 }
@@ -75,8 +62,8 @@ app.get("/", (req, res) => {
   res.send("🚀 Mongo App is running");
 });
 
-app.use('/resource', resourceRouter);
+app.use("/resource", resourceRouter);
 
 app.listen(PORT, () => {
-  console.log(`🔥 Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
