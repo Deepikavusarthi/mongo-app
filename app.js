@@ -1,12 +1,18 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+const path = require("path");  
 
 dotenv.config();
 
 const app = express();
 const PORT = 3000;
 
+// ✅ VIEW ENGINE (REQUIRED FOR PART 6)
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "pug");
+
+// MongoDB connection
 const connectionString = process.env.MONGO_CON;
 mongoose.connect(connectionString);
 
@@ -16,12 +22,18 @@ db.once("open", function () {
   console.log("Connected to MongoDB Atlas");
 });
 
+// Models
 const Costume = require("./models/costume");
-const resourceRouter = require("./routes/resource");
 
+// Routers
+const resourceRouter = require("./routes/resource");
+const costumesRouter = require("./routes/costumes");  // ✅ ADD THIS
+
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Seed data
 async function recreateDB() {
   await Costume.deleteMany();
 
@@ -58,12 +70,16 @@ if (reseed) {
   recreateDB();
 }
 
+// Root route
 app.get("/", (req, res) => {
   res.send("🚀 Mongo App is running");
 });
 
+// Routes
 app.use("/resource", resourceRouter);
+app.use("/costumes", costumesRouter);   // ✅ ADD THIS
 
+// Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
