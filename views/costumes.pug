@@ -2,6 +2,19 @@ extends layout
 
 block content
   h1= title
+
+  p
+    a(href="/resource/costumes") View JSON
+    |   
+    a(href="/costumes/create") Add New Costume
+
   ul
     each item in results
-      li #{item.costume_type} - #{item.size} - $#{item.cost}
+      li
+        | #{item.costume_type} - #{item.size} - $#{item.cost}
+        |   
+        a(href=`/costumes/detail/${item._id}`) Inspect
+        |   
+        a(href=`/costumes/update/${item._id}`) Update
+        |   
+        a(href=`/costumes/delete/${item._id}`) Delete
