@@ -1,16 +1,19 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-const path = require("path");  
+const path = require("path");
 
 dotenv.config();
 
 const app = express();
-const PORT = 3000;
 
-// ✅ VIEW ENGINE (REQUIRED FOR PART 6)
+// View engine
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
+
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // MongoDB connection
 const connectionString = process.env.MONGO_CON;
@@ -27,11 +30,7 @@ const Costume = require("./models/costume");
 
 // Routers
 const resourceRouter = require("./routes/resource");
-const costumesRouter = require("./routes/costumes");  // ✅ ADD THIS
-
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+const costumesRouter = require("./routes/costumes");
 
 // Seed data
 async function recreateDB() {
@@ -72,20 +71,15 @@ if (reseed) {
 
 // Root route
 app.get("/", (req, res) => {
-  res.send("🚀 Mongo App is running");
+  res.send("Mongo App is running");
 });
 
 // Routes
 app.use("/resource", resourceRouter);
-app.use("/costumes", costumesRouter);   // ✅ ADD THIS
+app.use("/costumes", costumesRouter);
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-
 const port = process.env.PORT || 3000;
-
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
