@@ -1,0 +1,56 @@
+extends layout
+
+block content
+  h1= title
+
+  if toShow
+    div
+      span(class="costumeAttr") Costume Id:
+      span= toShow._id
+    br
+
+    div
+      span(class="costumeAttr") Costume type:
+      span= toShow.costume_type
+    br
+
+    div
+      span(class="costumeAttr") Costume size:
+      span= toShow.size
+    br
+
+    div
+      span(class="costumeAttr") Costume cost:
+      span= toShow.cost
+    br
+
+    button(id='delete') Delete
+    | 
+    button(id='cancel') Cancel
+
+    script.
+      document.getElementById('delete').addEventListener('click', function() {
+        fetch('/resource/costumes/' + '#{toShow._id}', {
+          method: 'DELETE'
+        })
+        .then((resp) => resp.json())
+        .then((body) => {
+          alert('Delete succeeded')
+          window.location.href = '/costumes'
+        })
+        .catch((error) => {
+          alert('Delete failed ' + error)
+        })
+      })
+
+      document.getElementById('cancel').addEventListener('click', function() {
+        window.location.href = '/costumes'
+      })
+  else
+    p No costume found.
+    button(id='cancel') Cancel
+
+    script.
+      document.getElementById('cancel').addEventListener('click', function() {
+        window.location.href = '/costumes'
+      })
