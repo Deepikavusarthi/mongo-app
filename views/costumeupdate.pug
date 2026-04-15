@@ -1,0 +1,49 @@
+extends layout
+
+block content
+  h1= title
+
+  if toShow
+    div
+      span(class="costumeAttr") Costume Id:
+      span= toShow._id
+
+    br
+
+    form(id='CostumeForm', action='/resource/costumes/' + toShow._id, method='PUT')
+      div
+        label.costumeAttr(for='costume_type') Costume type
+        input#costume_type(type='text', name='costume_type', value=toShow.costume_type)
+
+      br
+
+      div
+        label.costumeAttr(for='size') Costume size
+        input#size(type='text', name='size', value=toShow.size)
+
+      br
+
+      div
+        label.costumeAttr(for='cost') Costume cost
+        input#cost(type='number', name='cost', value=toShow.cost)
+
+      br
+
+      input(type='submit', value='Update')
+
+    script.
+      document.forms['CostumeForm'].addEventListener('submit', (event) => {
+        event.preventDefault();
+        fetch(event.target.action, {
+          method: 'PUT',
+          body: new URLSearchParams(new FormData(event.target))
+        }).then((resp) => {
+          return resp.json();
+        }).then((body) => {
+          alert("Update succeeded");
+        }).catch((error) => {
+          alert("Update failed " + error);
+        });
+      });
+  else
+    p No costume found.
