@@ -7,17 +7,16 @@ dotenv.config();
 
 const app = express();
 
-// View engine
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 
-// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// MongoDB connection
-const connectionString = process.env.MONGO_CON;
-mongoose.connect(connectionString);
+const resourceRouter = require("./routes/resource");
+const costumesRouter = require("./routes/costumes");
+
+mongoose.connect(process.env.MONGO_CON);
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
@@ -25,61 +24,13 @@ db.once("open", function () {
   console.log("Connected to MongoDB Atlas");
 });
 
-// Models
-const Costume = require("./models/costume");
-
-// Routers
-const resourceRouter = require("./routes/resource");
-const costumesRouter = require("./routes/costumes");
-
-// Seed data
-async function recreateDB() {
-  await Costume.deleteMany();
-
-  let instance1 = new Costume({
-    costume_type: "ghost",
-    size: "large",
-    cost: 15.4
-  });
-
-  let instance2 = new Costume({
-    costume_type: "witch",
-    size: "medium",
-    cost: 22
-  });
-
-  let instance3 = new Costume({
-    costume_type: "vampire",
-    size: "small",
-    cost: 18.5
-  });
-
-  await instance1.save();
-  console.log("First object saved");
-
-  await instance2.save();
-  console.log("Second object saved");
-
-  await instance3.save();
-  console.log("Third object saved");
-}
-
-let reseed = false;
-if (reseed) {
-  recreateDB();
-}
-
-// Root route
-app.get("/", (req, res) => {
+app.get("/", function(req, res) {
   res.send("Mongo App is running");
 });
 
-// Routes
 app.use("/resource", resourceRouter);
 app.use("/costumes", costumesRouter);
 
-// Start server
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+app.listen(3000, function () {
+  console.log("Server running on port 3000");
 });
