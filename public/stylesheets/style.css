@@ -1,7 +1,18 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
 .costumeAttr {
   background-color: aquamarine;
-  width: 120px;
+  width: 140px;
   display: inline-block;
   margin-right: 10px;
-  padding: 5px;
+  padding: 6px;
+  font-weight: bold;
+}
+
+button, input[type="submit"] {
+  margin-top: 10px;
+  padding: 8px 12px;
 }
