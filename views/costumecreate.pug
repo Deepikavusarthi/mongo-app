@@ -12,7 +12,7 @@ block content
 
     div
       label.costumeAttr(for='size') Costume size
-      input#size(type='text', name='size')
+      input#size(type='number', name='size')
 
     br
 
@@ -25,16 +25,24 @@ block content
     input(type='submit')
 
   script.
-    document.forms['CostumeForm'].addEventListener('submit', (event) => {
+    document.forms['CostumeForm'].addEventListener('submit', async (event) => {
       event.preventDefault();
-      fetch(event.target.action, {
-        method: 'POST',
-        body: new URLSearchParams(new FormData(event.target))
-      }).then((resp) => {
-        return resp.json();
-      }).then((body) => {
+      try {
+        const resp = await fetch(event.target.action, {
+          method: 'POST',
+          body: new URLSearchParams(new FormData(event.target))
+        });
+
+        const body = await resp.json();
+
+        if (!resp.ok || body.error) {
+          alert("Save failed: " + (body.error || "Validation error"));
+          return;
+        }
+
         alert("Save succeeded");
-      }).catch((error) => {
-        alert("Save failed " + error);
-      });
+        window.location.href = "/costumes";
+      } catch (error) {
+        alert("Save failed: " + error);
+      }
     });

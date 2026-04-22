@@ -1,9 +1,22 @@
-const mongoose = require("mongoose");
+var mongoose = require('mongoose')
 
-const costumeSchema = new mongoose.Schema({
-  costume_type: String,
-  size: String,
-  cost: Number
-});
+const costumeSchema = mongoose.Schema({
+  costume_type: {
+    type: String,
+    required: true
+  },
+  size: {
+    type: Number,
+    required: true,
+    min: 1,
+    max: 50
+  },
+  cost: {
+    type: Number,
+    required: true,
+    min: 1,
+    max: 1000
+  }
+})
 
-module.exports = mongoose.model("Costume", costumeSchema);
+module.exports = mongoose.model("Costume", costumeSchema)
