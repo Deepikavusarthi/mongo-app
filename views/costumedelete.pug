@@ -3,54 +3,33 @@ extends layout
 block content
   h1= title
 
-  if toShow
-    div
-      span(class="costumeAttr") Costume Id:
-      span= toShow._id
-    br
+  h2 Are you sure you want to delete this?
 
-    div
-      span(class="costumeAttr") Costume type:
-      span= toShow.costume_type
-    br
+  ul
+    li Type: #{toShow.costume_type}
+    li Size: #{toShow.size}
+    li Cost: #{toShow.cost}
 
-    div
-      span(class="costumeAttr") Costume size:
-      span= toShow.size
-    br
+  form(id='deleteForm')
+    button(type='submit') Delete
 
-    div
-      span(class="costumeAttr") Costume cost:
-      span= toShow.cost
-    br
+  script.
+    document.getElementById('deleteForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const id = "#{toShow._id}";
 
-    button(id='delete') Delete
-    | 
-    button(id='cancel') Cancel
-
-    script.
-      document.getElementById('delete').addEventListener('click', function() {
-        fetch('/resource/costumes/' + '#{toShow._id}', {
+      try {
+        const resp = await fetch('/resource/costumes/' + id, {
           method: 'DELETE'
-        })
-        .then((resp) => resp.json())
-        .then((body) => {
-          alert('Delete succeeded')
-          window.location.href = '/costumes'
-        })
-        .catch((error) => {
-          alert('Delete failed ' + error)
-        })
-      })
+        });
 
-      document.getElementById('cancel').addEventListener('click', function() {
-        window.location.href = '/costumes'
-      })
-  else
-    p No costume found.
-    button(id='cancel') Cancel
+        if (!resp.ok) {
+          throw new Error("Delete failed");
+        }
 
-    script.
-      document.getElementById('cancel').addEventListener('click', function() {
-        window.location.href = '/costumes'
-      })
+        alert("Delete successful");
+        window.location.href = "/costumes";
+      } catch (err) {
+        alert("Delete failed: " + err);
+      }
+    });

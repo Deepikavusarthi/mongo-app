@@ -1,13 +1,34 @@
 extends layout
 
 block content
-  h1 Costume Search Results
-  - let items = results;
+  h1= title
 
-  div(style="display:flex; flex-wrap:wrap; gap:20px; align-items:flex-start;")
-    each item in items
-      div(style="border:1px solid #ccc; padding:15px; width:220px; box-sizing:border-box;")
-        h3 #{item.costume_type}
-        p Size: #{item.size}
-        p Cost: $#{item.cost}
-        a(href='/costumes/update?id=' + item._id) Update
+  // CREATE BUTTON (TOP)
+  a(href='/costumes/create')
+    button Create New Costume
+
+  br
+  br
+
+  // LOOP THROUGH ITEMS
+  each item in results
+    div
+      strong #{item.costume_type}
+      |  | Size: #{item.size}
+      |  | Cost: #{item.cost}
+      br
+
+      // DETAIL BUTTON
+      a(href='/costumes/detail?id=' + item._id)
+        button Detail
+
+      // UPDATE BUTTON
+      a(href='/costumes/update?id=' + item._id)
+        button Update
+
+      // DELETE BUTTON
+      a(href='/costumes/delete?id=' + item._id)
+        button Delete
+
+      br
+      br
